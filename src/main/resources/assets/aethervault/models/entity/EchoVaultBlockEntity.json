@@ -1,9 +1,50 @@
 {
   "model": "custom_block",
   "textures": {
-    "all": "aethervault:block/echo_vault_temporal"
+    "particle": "aethervault:block/echo_vault_bottom",
+    "vortex": "aethervault:block/echo_vault_face",
+    "band_top": "aethervault:block/echo_vault_top",
+    "band_bottom": "aethervault:block/echo_vault_bottom"
   },
   "elements": [
-    {"from": [0, 0, 0], "to": [16, 16, 16]}
+    {
+      "name": "base_band",
+      "from": [1, 0, 1],
+      "to": [15, 5, 15],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#band_bottom"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#band_bottom"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#band_bottom"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#band_bottom"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#band_bottom"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#band_bottom", "cullface": "down"}
+      }
+    },
+    {
+      "name": "vortex_column",
+      "from": [2.5, 5, 2.5],
+      "to": [13.5, 11, 13.5],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#vortex"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#vortex"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#vortex"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#vortex"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#vortex"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#vortex"}
+      }
+    },
+    {
+      "name": "top_band",
+      "from": [1, 11, 1],
+      "to": [15, 16, 15],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#band_top"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#band_top"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#band_top"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#band_top"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#band_top", "cullface": "up"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#band_top"}
+      }
+    }
   ]
 }

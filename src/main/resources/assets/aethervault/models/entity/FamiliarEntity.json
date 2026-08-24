@@ -1,10 +1,77 @@
 {
   "model": "custom_entity",
   "textures": {
+    "particle": "aethervault:entity/familiar_body",
     "body": "aethervault:entity/familiar_body",
     "aura": "aethervault:entity/familiar_aura"
   },
   "elements": [
-    {"from": [0, 0, 0], "to": [16, 16, 16]}
+    {
+      "name": "chassis",
+      "from": [4, 0, 4],
+      "to": [12, 8, 12],
+      "faces": {
+        "north": {"uv": [5, 7, 11, 12], "texture": "#body"},
+        "south": {"uv": [3, 5.5, 12.5, 13.5], "texture": "#body"},
+        "east": {"uv": [3, 5.5, 12.5, 13.5], "texture": "#body"},
+        "west": {"uv": [3, 5.5, 12.5, 13.5], "texture": "#body"},
+        "up": {"uv": [3, 5.5, 12.5, 13.5], "texture": "#body"},
+        "down": {"uv": [3, 5.5, 12.5, 13.5], "texture": "#body"}
+      }
+    },
+    {
+      "name": "glass_dome",
+      "from": [5, 8, 5],
+      "to": [11, 14, 11],
+      "render_type": "translucent",
+      "faces": {
+        "north": {"uv": [4, 0.5, 11.5, 5], "texture": "#body"},
+        "south": {"uv": [4, 0.5, 11.5, 5], "texture": "#body"},
+        "east": {"uv": [4, 0.5, 11.5, 5], "texture": "#body"},
+        "west": {"uv": [4, 0.5, 11.5, 5], "texture": "#body"},
+        "up": {"uv": [4, 0.5, 11.5, 5], "texture": "#body"},
+        "down": {"uv": [4, 0.5, 11.5, 5], "texture": "#body"}
+      }
+    },
+    {
+      "name": "wing_left",
+      "from": [0, 5, 7],
+      "to": [4, 9, 8],
+      "faces": {
+        "north": {"uv": [0, 6, 2.5, 9], "texture": "#body"},
+        "south": {"uv": [0, 6, 2.5, 9], "texture": "#body"},
+        "east": {"uv": [0, 6, 2.5, 9], "texture": "#body"},
+        "west": {"uv": [0, 6, 2.5, 9], "texture": "#body"},
+        "up": {"uv": [0, 6, 2.5, 9], "texture": "#body"},
+        "down": {"uv": [0, 6, 2.5, 9], "texture": "#body"}
+      }
+    },
+    {
+      "name": "wing_right",
+      "from": [12, 5, 7],
+      "to": [16, 9, 8],
+      "faces": {
+        "north": {"uv": [13.5, 6, 15.5, 9], "texture": "#body"},
+        "south": {"uv": [13.5, 6, 15.5, 9], "texture": "#body"},
+        "east": {"uv": [13.5, 6, 15.5, 9], "texture": "#body"},
+        "west": {"uv": [13.5, 6, 15.5, 9], "texture": "#body"},
+        "up": {"uv": [13.5, 6, 15.5, 9], "texture": "#body"},
+        "down": {"uv": [13.5, 6, 15.5, 9], "texture": "#body"}
+      }
+    },
+    {
+      "name": "aura_shell",
+      "from": [3, -1, 3],
+      "to": [13, 15, 13],
+      "render_type": "translucent",
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#aura"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#aura"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#aura"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#aura"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#aura"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#aura"}
+      }
+    }
   ]
 }
