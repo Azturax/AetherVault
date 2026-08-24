@@ -1,10 +1,10 @@
 {
   "asset": "aethervault:block/echo_vault_temporal",
-  "description": "Temporal echo design featuring swirling indigo and teal energy with gold highlights.",
-  "palette": ["#190D3F", "#008080", "#FFD700"],
+  "description": "Bronze-banded vault framing a swirling temporal vortex (cyan/teal arms over a dark core), matching the tech-magic reference art.",
+  "palette": ["#080516", "#3D2B66", "#A0682B", "#4FE3E3", "#FFD700"],
   "required_textures": [
-    {"name": "block/echo_vault_face.png", "description": "Main temporal face texture, showing energy flow.", "color_hex": ["#190D3F", "#008080"]},
-    {"name": "block/echo_vault_top.png", "description": "Top surface with subtle echo patterns.", "color_hex": ["#190D3F", "#FFD700"]},
-    {"name": "block/echo_vault_bottom.png", "description": "Base structure, deep indigo.", "color_hex": "#190D3F"}
+    {"name": "block/echo_vault_face.png", "description": "Vortex portal face framed in bronze bands with gold rivets.", "color_hex": ["#080516", "#4FE3E3", "#A0682B"]},
+    {"name": "block/echo_vault_top.png", "description": "Bronze rune band with engraved ticks around a central vortex opening.", "color_hex": ["#A0682B", "#4FE3E3"]},
+    {"name": "block/echo_vault_bottom.png", "description": "Bronze base band with rivets.", "color_hex": "#A0682B"}
   ]
 }

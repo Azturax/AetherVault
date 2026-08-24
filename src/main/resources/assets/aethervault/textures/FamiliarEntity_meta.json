@@ -1,10 +1,10 @@
 {
   "asset": "aethervault:entity/familiar",
-  "description": "A semi-sentient entity with a detailed model and mystical aura.",
-  "palette": ["#190D3F", "#008080", "#FFD700"],
+  "description": "Familiar Carrier construct: glass dome head, bronze chassis, glowing cyan core and teal wings, matching the tech-magic reference art.",
+  "palette": ["#A0682B", "#7FD4E8", "#4FE3E3", "#008080", "#FFD700"],
   "required_assets": [
     {"name": "familiar_model.json", "description": "Detailed 3D model definition."},
-    {"name": "entity/familiar_body.png", "description": "Main body texture, deep indigo with magical highlights.", "color_hex": "#190D3F"},
-    {"name": "entity/familiar_aura.png", "description": "Semi-sentient aura effect (teal and gold glow).", "color_hex": ["#008080", "#FFD700"]}
+    {"name": "entity/familiar_body.png", "description": "Construct body: glass dome, bronze chassis, glowing cyan core, teal wings.", "color_hex": ["#A0682B", "#7FD4E8", "#4FE3E3"]},
+    {"name": "entity/familiar_aura.png", "description": "Cyan glow aura with drifting gold motes.", "color_hex": ["#4FE3E3", "#FFD700"]}
   ]
 }

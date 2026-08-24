@@ -1,10 +1,10 @@
 {
   "asset": "aethervault:block/lattice_anchor_crystalline",
-  "description": "Crystalline lattice structure with glowing teal and gold accents against a deep indigo base.",
-  "palette": ["#190D3F", "#008080", "#FFD700"],
+  "description": "Deep indigo faces with glowing cyan runes, gold corner brackets and cyan gems, matching the tech-magic reference art.",
+  "palette": ["#190D3F", "#C9932B", "#4FE3E3", "#FFD700"],
   "required_textures": [
-    {"name": "block/lattice_anchor_face.png", "description": "Main crystalline face texture."},
-    {"name": "block/lattice_anchor_top.png", "description": "Top surface with glowing lattice pattern."},
-    {"name": "block/lattice_anchor_bottom.png", "description": "Base structure, deep indigo."}
+    {"name": "block/lattice_anchor_face.png", "description": "Indigo face with central cyan rune glyph and gold corner brackets.", "color_hex": ["#190D3F", "#4FE3E3", "#C9932B"]},
+    {"name": "block/lattice_anchor_top.png", "description": "Top surface with cyan rune circle, gold ticks and corner brackets.", "color_hex": ["#190D3F", "#4FE3E3", "#FFD700"]},
+    {"name": "block/lattice_anchor_bottom.png", "description": "Deep indigo base with gold corner brackets.", "color_hex": "#190D3F"}
   ]
 }
