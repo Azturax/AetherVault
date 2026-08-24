@@ -1,0 +1,133 @@
+{
+  "model": "custom_entity_detailed",
+  "description": "Familiar Carrier construct: glass dome head, bronze chassis with glowing cyan core, teal wings, and bronze feet. Parts carry pivots for animation.",
+  "texture": "aethervault:entity/familiar_body",
+  "texture_size": [32, 32],
+  "parts": [
+    {
+      "name": "chassis",
+      "pivot": [0, 8, 0],
+      "cubes": [
+        {
+          "from": [4, 0, 4],
+          "to": [12, 8, 12],
+          "uv": {
+            "north": [5, 7, 11, 12],
+            "south": [3, 5.5, 12.5, 13.5],
+            "east": [3, 5.5, 12.5, 13.5],
+            "west": [3, 5.5, 12.5, 13.5],
+            "up": [3, 5.5, 12.5, 13.5],
+            "down": [3, 5.5, 12.5, 13.5]
+          }
+        }
+      ]
+    },
+    {
+      "name": "dome",
+      "pivot": [0, 14, 0],
+      "render_type": "translucent",
+      "cubes": [
+        {
+          "from": [5, 8, 5],
+          "to": [11, 14, 11],
+          "uv": {
+            "all": [4, 0.5, 11.5, 5]
+          }
+        }
+      ]
+    },
+    {
+      "name": "core",
+      "pivot": [0, 4, 4],
+      "glow": true,
+      "cubes": [
+        {
+          "from": [6.75, 2.25, 3.5],
+          "to": [9.25, 4.75, 4.5],
+          "uv": {
+            "all": [7, 8.5, 8.5, 10]
+          }
+        }
+      ]
+    },
+    {
+      "name": "wing_left",
+      "pivot": [4, 9, 7.5],
+      "cubes": [
+        {
+          "from": [0, 5, 7],
+          "to": [4, 9, 8],
+          "uv": {
+            "all": [0, 6, 2.5, 9]
+          }
+        }
+      ]
+    },
+    {
+      "name": "wing_right",
+      "pivot": [12, 9, 7.5],
+      "cubes": [
+        {
+          "from": [12, 5, 7],
+          "to": [16, 9, 8],
+          "uv": {
+            "all": [13.5, 6, 15.5, 9]
+          }
+        }
+      ]
+    },
+    {
+      "name": "feet",
+      "pivot": [0, 0, 0],
+      "cubes": [
+        {
+          "from": [5, -1, 5],
+          "to": [7, 0, 8],
+          "uv": {
+            "all": [3, 12.5, 5, 13.5]
+          }
+        },
+        {
+          "from": [9, -1, 5],
+          "to": [11, 0, 8],
+          "uv": {
+            "all": [3, 12.5, 5, 13.5]
+          }
+        }
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "part": "wing_left",
+      "type": "rotate",
+      "axis": "z",
+      "range": [-28, 8],
+      "mode": "oscillate",
+      "period_ticks": 24
+    },
+    {
+      "part": "wing_right",
+      "type": "rotate",
+      "axis": "z",
+      "range": [-8, 28],
+      "mode": "oscillate",
+      "period_ticks": 24
+    },
+    {
+      "part": "dome",
+      "type": "bob",
+      "axis": "y",
+      "range": [0, 0.5],
+      "mode": "oscillate",
+      "period_ticks": 40
+    },
+    {
+      "part": "core",
+      "type": "glow_pulse",
+      "range": [0.6, 1.0],
+      "mode": "oscillate",
+      "period_ticks": 30
+    }
+  ]
+}
