@@ -1,0 +1,15 @@
+// Placeholder metadata for Rune Program Tablet GUI
+// Theme: Crystalline, glowing 3D lattice (Indigo/Teal/Gold)
+// Required Assets: node_base.png, edge_line.png, active_node.png, inactive_edge.png
+
+{
+  "asset": "aethervault:gui/rune_program",
+  "description": "Custom GUI textures for the Rune Program Tablet to match the crystalline lattice theme.",
+  "palette": ["#190D3F", "#008080", "#FFD700"],
+  "required_textures": [
+    {"name": "gui/node_base.png", "description": "Standard node texture (indigo base)."},
+    {"name": "gui/edge_line.png", "description": "Connecting edge line texture (teal glow)."},
+    {"name": "gui/active_node.png", "description": "Active node state (gold highlight)."},
+    {"name": "gui/inactive_edge.png", "description": "Inactive edge state."}
+  ]
+}

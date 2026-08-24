@@ -1,0 +1,10 @@
+{
+  "model": "custom_entity",
+  "textures": {
+    "body": "aethervault:entity/familiar_body",
+    "aura": "aethervault:entity/familiar_aura"
+  },
+  "elements": [
+    {"from": [0, 0, 0], "to": [16, 16, 16]}
+  ]
+}

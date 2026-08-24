@@ -1,0 +1,10 @@
+{
+  "asset": "aethervault:block/echo_vault_temporal",
+  "description": "Temporal echo design featuring swirling indigo and teal energy with gold highlights.",
+  "palette": ["#190D3F", "#008080", "#FFD700"],
+  "required_textures": [
+    {"name": "block/echo_vault_face.png", "description": "Main temporal face texture, showing energy flow.", "color_hex": ["#190D3F", "#008080"]},
+    {"name": "block/echo_vault_top.png", "description": "Top surface with subtle echo patterns.", "color_hex": ["#190D3F", "#FFD700"]},
+    {"name": "block/echo_vault_bottom.png", "description": "Base structure, deep indigo.", "color_hex": "#190D3F"}
+  ]
+}
