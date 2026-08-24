@@ -1,7 +1,3 @@
-// Placeholder metadata for LatticeAnchorBlockEntity textures
-// Theme: Crystalline, glowing 3D lattice (Indigo/Teal/Gold)
-// Required Assets: block/lattice_anchor_face.png, block/lattice_anchor_top.png, block/lattice_anchor_bottom.png
-
 {
   "asset": "aethervault:block/lattice_anchor_crystalline",
   "description": "Crystalline lattice structure with glowing teal and gold accents against a deep indigo base.",

@@ -10,7 +10,18 @@ public class RuneProgramGraphCanvas {
     private final List<Node> nodes = new ArrayList<>();
     private Node selectedNode = null;
     private boolean isDragging = false;
-    private FilterParameterUI parameterUi;
+    private boolean isPlacingNode = false;
+    private Node newNodeToPlace = null; // Temporary storage for node being placed
+
+    public void setPlacementMode(boolean enable) {
+        this.isPlacingNode = enable;
+        if (enable && !newNodeToPlace) {
+            // Default to InputNode if no specific type is set, or handle selection logic here.
+            // For now, we'll just enable the mode. Specific node types will be handled by external input.
+        } else if (!enable) {
+            this.newNodeToPlace = null; // Clear temporary placement data when exiting mode
+        }
+    }
 
     // Theme colors (Indigo/Teal/Gold) - defined in Node base class but repeated for context
     protected static final Color THEME_INDIGO = new java.awt.Color(75, 0, 130);
@@ -22,10 +33,10 @@ public class RuneProgramGraphCanvas {
     }
 
     /**
-     * Handles mouse click events to select nodes or initiate drag operations.
+     * Handles mouse click events to select nodes, initiate drag operations, or place new nodes.
      */
     public boolean handleMouseClick(float mouseX, float mouseY) {
-        // Check if any node was clicked (iterate backwards so top-most/last added is selected first)
+        // 1. Handle Node Selection/Dragging
         for (int i = nodes.size() - 1; i >= 0; i--) {
             Node node = nodes.get(i);
             if (node.handleMouseClick(mouseX, mouseY)) {
@@ -37,20 +48,44 @@ public class RuneProgramGraphCanvas {
             }
         }
 
-        // Clicked on empty canvas space
+        // 2. Handle Placement Mode (if not selecting a node)
+        if (isPlacingNode && newNodeToPlace == null) {
+            // Placeholder: In a real app, we'd determine the type of node to place here based on UI state.
+            // For now, let's default to an InputNode for demonstration purposes if placement is active.
+            String newId = "node_" + System.currentTimeMillis();
+            newNodeToPlace = new InputNode(newId); // Assuming InputNode is the default type
+            newNodeToPlace.setX(mouseX - 50); // Center node on click
+            newNodeToPlace.setY(mouseY - 30);
+        }
+
+        // If we are placing a node, add it to the list and reset placement state
+        if (isPlacingNode && newNodeToPlace != null) {
+            nodes.add(newNodeToPlace);
+            selectedNode = newNodeToPlace; // Select newly placed node
+            isPlacingNode = false; // Exit placement mode after placing one
+            newNodeToPlace = null;
+            return true;
+        }
+
+        // 3. Clicked on empty canvas space (and not in placement mode)
         selectedNode = null;
         isDragging = false;
+        connectionStartPort = null; // Clear connection state if clicking empty space
         return false;
+    }
     }
 
     /**
-     * Handles mouse movement while a node is being dragged.
+     * Handles mouse movement while a node is being dragged or during connection drawing.
      */
     public void handleMouseMove(float mouseX, float mouseY) {
         if (isDragging && selectedNode != null) {
             // Calculate new position based on initial click offset and current mouse position
             selectedNode.setX(mouseX - dragOffsetX);
             selectedNode.setY(mouseY - dragOffsetY);
+        } else if (connectionStartPort != null) {
+            // If we are in connection drawing mode, update the visual representation of the conduit here.
+            // For now, we just track the mouse position for future rendering logic.
         }
     }
 
@@ -79,18 +114,17 @@ public class RuneProgramGraphCanvas {
      */
     private void drawEdges() {
         System.out.println("Drawing all edges...");
-        // In a real GUI, this would iterate through all nodes and their outgoing connections
-        for (Node source : nodes) {
-            // We need access to the underlying StorageNode logic here to get actual connections.
-            // For now, we simulate drawing an edge if it's connected to something.
-            if (source instanceof com.aethervault.logic.StorageNode) {
-                com.aethervault.logic.StorageNode storageSource = (com.aethervault.logic.StorageNode) source;
+        for (Edge edge : edges) {
+            Node source = edge.getSourceNode();
+            Node target = edge.getTargetNode();
 
-                for (com.aethervault.logic.StorageNode target : storageSource.getOutgoingNodes()) {
-                    // Simulate drawing a glowing line from source to target
-                    System.out.println("  -> Drawing edge: " + source.getNodeId() + " -> " + target.getNodeId());
-                }
-            }
+            // In a real GUI, we would calculate the start and end points of the conduit based on port positions.
+            java.awt.Point startPos = getAbsolutePosition(source.getX(), source.getY()); // Simplified: using node center for now
+            java.awt.Point endPos = getAbsolutePosition(target.getX(), target.getY());
+
+            // Simulate drawing a glowing line (mana conduit) from source to target
+            System.out.println("  -> Drawing edge: " + source.getNodeId() + " -> " + target.getNodeId() + 
+                               " at start (" + startPos.x + ", " + startPos.y + ") and end (" + endPos.x + ", " + endPos.y + ")");
         }
     }
 

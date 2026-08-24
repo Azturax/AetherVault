@@ -1,7 +1,7 @@
 package com.aethervault.gui;
 
 import java.awt.Color;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Base abstract class for all nodes in the Rune Program Graph GUI.
@@ -32,16 +32,27 @@ public abstract class Node {
         public float getYOffset() { return yOffset; }
         public PortType getType() { return type; }
 
-        // Checks if a given canvas coordinate falls within this port's bounding box (simplified)
-        public boolean contains(float mouseX, float mouseY) {
-            return mouseX >= xOffset - 5 && mouseX <= xOffset + 5 && mouseY >= yOffset - 5 && mouseY <= yOffset + 5;
-        }
+            /**
+     * Calculates the absolute screen coordinates of a port relative to the canvas origin.
+     */
+    public java.awt.Point getAbsolutePosition(float nodeX, float nodeY) {
+        return new java.awt.Point((int)(nodeX + xOffset), (int)(nodeY + yOffset));
+    }
     }
 
     protected List<Port> inputPorts = new ArrayList<>();
     protected List<Port> outputPorts = new ArrayList<>();
+    protected Node parent; // Reference to the owning node
+
     public Node(String nodeId) {
         this.nodeId = nodeId;
+        this.parent = null;
+    }
+
+    // ... existing methods ...
+
+    public void setParent(Node parent) {
+        this.parent = parent;
     }
 
     public String getNodeId() {

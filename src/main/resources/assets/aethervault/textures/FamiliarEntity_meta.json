@@ -4,7 +4,7 @@
   "palette": ["#190D3F", "#008080", "#FFD700"],
   "required_assets": [
     {"name": "familiar_model.json", "description": "Detailed 3D model definition."},
-    {"name": "textures/body.png", "description": "Main body texture, deep indigo with magical highlights.", "color_hex": "#190D3F"},
-    {"name": "textures/aura.png", "description": "Semi-sentient aura effect (teal and gold glow).", "color_hex": ["#008080", "#FFD700"]}
+    {"name": "entity/familiar_body.png", "description": "Main body texture, deep indigo with magical highlights.", "color_hex": "#190D3F"},
+    {"name": "entity/familiar_aura.png", "description": "Semi-sentient aura effect (teal and gold glow).", "color_hex": ["#008080", "#FFD700"]}
   ]
 }
