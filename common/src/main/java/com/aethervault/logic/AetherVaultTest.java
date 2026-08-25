@@ -1,89 +1,73 @@
 package com.aethervault.logic;
 
-import com.aethervault.core.*;
 import com.aethervault.storage.lattice.LatticeAnchorBlockEntity;
+
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
-import java.util.UUID;
+import net.minecraft.world.item.Items;
 
 /**
- * A test class to demonstrate the full functionality of the RuneProgram and FlowEvaluator.
+ * A simulation demonstrating the full functionality of the RuneProgram and FlowEvaluator.
+ *
+ * <p>Graph topology (connection order defines success/failure branches):</p>
+ * <pre>
+ *   ItemIngest -> IsDamaged ──success──> RepairStation
+ *                     └────failure──> IsTool ──success──> MainLattice
+ *                                              └────failure──> Discard
+ * </pre>
  */
 public class AetherVaultTest {
     public static void main(String[] args) {
-        // 1. Setup Storage Target (The Output Destination)
-        LatticeAnchorBlockEntity lattice = new LatticeAnchorBlockEntity(null); // Mock BlockEntity for testing
+        // 1. Setup storage target (the output destination). Type/pos are mocked.
+        LatticeAnchorBlockEntity lattice = new LatticeAnchorBlockEntity(null, BlockPos.ZERO);
 
-        // 2. Define the Program Structure
+        // 2. Define the program structure.
         RuneProgram program = new RuneProgram("TestFlow_001");
 
-        // Create Nodes
-        StorageNode inputNode = new FlowEvaluator.InputNode("ItemIngest");
-        
-        // Filter 1: Check if item has a "RepairNeeded" tag (e.g., durability < 50%)
+        program.addNode(new FlowEvaluator.InputNode("ItemIngest"));
+
+        // Filter 1: route damaged items to the repair station.
         RuneCondition repairCheck = new DurabilityThresholdCondition(50);
-        FlowEvaluator.FilterNode repairFilter = new FlowEvaluator.FilterNode("IsDamaged", repairCheck, null, null);
+        program.addNode(new FlowEvaluator.FilterNode("IsDamaged", repairCheck));
 
-        // Filter 2: Check if item is a "Tool" (e.g., has the "Tool" tag)
-        RuneCondition toolCheck = new ItemTagCondition("Tool");
-        FlowEvaluator.FilterNode toolFilter = new FlowEvaluator.FilterNode("IsTool", toolCheck, null, null);
+        // Filter 2: route intact tools into the lattice.
+        RuneCondition toolCheck = new ItemTagCondition("minecraft:tools");
+        program.addNode(new FlowEvaluator.FilterNode("IsTool", toolCheck));
 
-        // Output Nodes
-        // Path A: Repair Node (Placeholder for a repair mechanism)
-        StorageNode repairOutput = new FlowEvaluator.OutputNode("RepairStation", lattice); 
-        // Path B: Storage Node (The main Lattice storage)
-        StorageNode storageOutput = new FlowEvaluator.OutputNode("MainLattice", lattice);
+        // Output nodes.
+        program.addNode(new FlowEvaluator.OutputNode("RepairStation", lattice));
+        program.addNode(new FlowEvaluator.OutputNode("MainLattice", lattice));
+        program.addNode(new FlowEvaluator.InputNode("Discard")); // end-of-flow placeholder
 
-        // Connect Nodes to form the graph logic:
-        // Input -> Repair Check (If damaged, go to repair; otherwise, check if it's a tool)
-        program.connectNodes(inputNode.getNodeId(), repairFilter.getNodeId()); 
-        
-        // Repair Check Success Path (Damaged item) -> Repair Station
-        program.connectNodes(repairFilter.getNodeId(), repairOutput.getNodeId());
+        // Connections: first outgoing = success path, second = failure path.
+        program.connectNodes("ItemIngest", "IsDamaged");
+        program.connectNodes("IsDamaged", "RepairStation");  // success: damaged
+        program.connectNodes("IsDamaged", "IsTool");         // failure: intact
+        program.connectNodes("IsTool", "MainLattice");       // success: tool
+        program.connectNodes("IsTool", "Discard");           // failure: neither
 
-        // Repair Check Failure Path (Not damaged, proceed to check if it's a tool)
-        program.connectNodes(repairFilter.getNodeId(), toolFilter.getNodeId()); 
-
-        // Tool Check Success Path -> Main Lattice Storage
-        program.connectNodes(toolFilter.getNodeId(), storageOutput.getNodeId());
-
-        // Tool Check Failure Path (Not damaged AND not a tool) -> Overflow/Discard (Placeholder)
-        StorageNode discard = new FlowEvaluator.InputNode("Discard"); // Reusing InputNode as placeholder for end of flow
-        program.connectNodes(toolFilter.getNodeId(), discard.getNodeId());
-
-
-        // 3. Initialize the Evaluator and Run Test Cases
+        // 3. Initialize the evaluator and run test cases.
         FlowEvaluator evaluator = new FlowEvaluator(program);
 
         System.out.println("--- Running AetherVault Program Simulation ---");
 
-        // TEST CASE 1: Damaged Tool (Should go to RepairStation)
-        ItemStack damagedTool = createTestItem("Sword", "Tool", true, 30); // 30% durability remaining
+        // TEST CASE 1: Damaged tool (should route to RepairStation).
+        ItemStack damagedTool = createTestItem(true, 30); // 30% durability remaining
         System.out.println("\n[TEST] Running Damaged Tool...");
         evaluator.evaluate(damagedTool);
 
-        // TEST CASE 2: Pristine Item (Should go to MainLattice)
-        ItemStack pristineItem = createTestItem("AetherShard", "Resource", false, 100); // 100% durability remaining
-        System.out.println("\n[TEST] Running Pristine Resource...");
+        // TEST CASE 2: Pristine item (should route to MainLattice or Discard).
+        ItemStack pristineItem = createTestItem(false, 100);
+        System.out.println("\n[TEST] Running Pristine Item...");
         evaluator.evaluate(pristineItem);
-
-        // TEST CASE 3: Undefined Item (Should go to Discard)
-        ItemStack undefinedItem = createTestItem("MysteryBox", "Unknown", false, 100);
-        System.out.println("\n[TEST] Running Undefined Item...");
-        evaluator.evaluate(undefinedItem);
     }
 
-    /** Helper method to simulate item creation with tags and durability */
-    private static ItemStack createTestItem(String name, String tag, boolean isDamaged, int durability) {
-        ItemStack stack = new ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD); // Using a base item for simplicity
-        stack.setCustomTag("Name", net.minecraft.nbt.CompoundTag.valueOf(name));
-        if (tag != null) {
-            stack.setCustomTag(tag, net.minecraft.nbt.CompoundTag.valueOf(tag));
-        }
-
-        // Simulate durability damage
-        int maxDamage = 100;
-        int currentDamage = isDamaged ? (maxDamage - durability) : 0;
-        stack.setDamage(currentDamage);
+    /** Helper method to simulate an item with a given durability state. */
+    private static ItemStack createTestItem(boolean isDamaged, int durabilityPercent) {
+        ItemStack stack = new ItemStack(Items.DIAMOND_SWORD); // durable base item
+        int maxDamage = stack.getMaxDamage();
+        int currentDamage = isDamaged ? (int) ((100 - durabilityPercent) / 100.0 * maxDamage) : 0;
+        stack.setDamageValue(currentDamage);
         return stack;
     }
 }

@@ -1,25 +1,50 @@
 package com.aethervault.logic;
 
+import com.aethervault.core.IAetherStorage;
+
 import net.minecraft.world.item.ItemStack;
+
 import java.util.Map;
 
 /**
  * Service responsible for traversing a RuneProgram graph and routing items based on defined conditions.
+ *
+ * <p>Routing semantics for {@code FilterNode}: the first outgoing connection is the
+ * <em>success</em> path, the second outgoing connection is the <em>failure</em> path.
+ * This matches the order in which {@link RuneProgram#connectNodes(String, String)}
+ * calls are made when building the graph.</p>
  */
 public class FlowEvaluator {
     private final Map<String, StorageNode> programNodes; // The entire graph structure
+
+    /**
+     * Creates an evaluator over an empty program. Useful as a default; routing
+     * will simply report a missing entry node until a program is assigned.
+     */
+    public FlowEvaluator() {
+        this(new RuneProgram("default"));
+    }
 
     public FlowEvaluator(RuneProgram program) {
         this.programNodes = program.getNodes();
     }
 
     /**
+     * Convenience entry point used by event hooks for ad-hoc item evaluation.
+     */
+    public void evaluateItem(ItemStack item) {
+        System.out.println("FlowEvaluator: starting evaluation for item.");
+        evaluate(item);
+    }
+
+    /**
      * Initiates the evaluation process for an incoming item.
-     * @param item The ItemStack to be routed through the rune program.
+     *
+     * @param item the ItemStack to be routed through the rune program
      */
     public void evaluate(ItemStack item) {
         // Find the designated entry point (Input Node).
-        StorageNode startNode = findEntryNode(); 
+        StorageNode startNode = findEntryNode();
 
         if (startNode == null) {
             System.err.println("Error: RuneProgram has no defined entry node.");
@@ -33,27 +58,33 @@ public class FlowEvaluator {
      * Recursively traverses the graph to route an item.
      */
     private void routeItem(ItemStack item, StorageNode currentNode) {
-        if (currentNode == null) return; // Should not happen in a well-formed program
+        if (currentNode == null) {
+            // Reached a dead end (e.g., unconnected failure path): item falls through.
+            System.out.println("FlowEvaluator: item fell through at a dead-end node.");
+            return;
+        }
 
-        // 1. Check if the current node is a Filter
+        // 1. Filter nodes route along success/failure connections.
         if (currentNode instanceof FilterNode filterNode) {
             RuneCondition condition = filterNode.getCondition();
-            
+
             if (condition.matches(item)) {
-                // Condition met: follow the 'success' path
-                StorageNode nextNode = filterNode.getNextSuccessNode();
-                routeItem(item, nextNode);
+                routeItem(item, filterNode.getSuccessPath());
             } else {
-                // Condition failed: follow the 'failure/default' path
-                StorageNode nextNode = filterNode.getNextFailureNode();
-                routeItem(item, nextNode);
+                routeItem(item, filterNode.getFailurePath());
             }
-        } 
-        // 2. Check if the current node is an Output (Destination)
-        else if (currentNode instanceof OutputNode outputNode) {
-            outputNode.storeItem(item); // Final destination: store or process item
         }
-        // 3. Handle Input/Start Node logic here...
+        // 2. Output nodes are final destinations.
+        else if (currentNode instanceof OutputNode outputNode) {
+            outputNode.storeItem(item);
+        }
+        // 3. Input nodes simply pass the item onward.
+        else if (currentNode instanceof InputNode) {
+            StorageNode next = currentNode.getOutgoingNodes().isEmpty()
+                    ? null
+                    : currentNode.getOutgoingNodes().get(0);
+            routeItem(item, next);
+        }
     }
 
     /**
@@ -61,40 +92,47 @@ public class FlowEvaluator {
      */
     private StorageNode findEntryNode() {
         for (StorageNode node : programNodes.values()) {
-            if (node instanceof InputNode inputNode) {
-                return inputNode; // Assuming only one entry point per program
+            if (node instanceof InputNode) {
+                return node; // Assuming only one entry point per program
             }
         }
         return null;
     }
 
-    // --- Helper classes for Filter/Output nodes to make the evaluator work ---
+    // --- Node implementations for the evaluator ---
 
     /**
-     * Represents a node that applies a condition and routes based on result.
+     * A node that applies a condition and routes based on the result.
+     * First outgoing connection = success path; second = failure path.
      */
     public static class FilterNode extends StorageNode {
         private final RuneCondition condition;
-        private final StorageNode successPath; // Where to go if condition is TRUE
-        private final StorageNode failurePath; // Where to go if condition is FALSE
 
-        public FilterNode(String nodeId, RuneCondition condition, StorageNode successPath, StorageNode failurePath) {
+        public FilterNode(String nodeId, RuneCondition condition) {
             super(nodeId);
             this.condition = condition;
-            this.successPath = successPath;
-            this.failurePath = failurePath;
         }
 
         @Override
-        public NodeType getType() { return NodeType.FILTER; }
+        public NodeType getType() {
+            return NodeType.FILTER;
+        }
 
-        public RuneCondition getCondition() { return condition; }
-        public StorageNode getNextSuccessNode() { return successPath; }
-        public StorageNode getNextFailureNode() { return failurePath; }
+        public RuneCondition getCondition() {
+            return condition;
+        }
+
+        public StorageNode getSuccessPath() {
+            return getOutgoingNodes().size() > 0 ? getOutgoingNodes().get(0) : null;
+        }
+
+        public StorageNode getFailurePath() {
+            return getOutgoingNodes().size() > 1 ? getOutgoingNodes().get(1) : null;
+        }
     }
 
     /**
-     * Represents a node that acts as the final destination for an item.
+     * A node that acts as the final destination for an item.
      */
     public static class OutputNode extends StorageNode {
         private final IAetherStorage storageTarget; // The actual storage mechanism (Lattice, Echo, etc.)
@@ -105,28 +143,32 @@ public class FlowEvaluator {
         }
 
         @Override
-        public NodeType getType() { return NodeType.OUTPUT; }
+        public NodeType getType() {
+            return NodeType.OUTPUT;
+        }
 
         /**
          * Stores the item in the designated storage mechanism.
          */
         public void storeItem(ItemStack item) {
             // In a real scenario, we'd generate a unique ID for retrieval later.
-            storageTarget.store(item); 
+            storageTarget.store(item);
             System.out.println("Item routed to output node: " + getNodeId());
         }
     }
 
     /**
-     * Represents the starting point of the flow graph.
+     * The starting point of the flow graph. Handles item ingestion from world
+     * events (e.g., dropped items) in a full implementation.
      */
     public static class InputNode extends StorageNode {
-        // In a real mod, this would handle item ingestion from world events (e.g., dropped items).
         public InputNode(String nodeId) {
             super(nodeId);
         }
 
         @Override
-        public NodeType getType() { return NodeType.INPUT; }
+        public NodeType getType() {
+            return NodeType.INPUT;
+        }
     }
 }

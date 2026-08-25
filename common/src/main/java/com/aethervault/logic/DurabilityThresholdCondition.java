@@ -20,7 +20,7 @@ public class DurabilityThresholdCondition implements RuneCondition {
 
     private boolean checkDurabilityThreshold(ItemStack item, int threshold) {
         int maxDamage = item.getMaxDamage();
-        int currentDamage = item.getDamage();
+        int currentDamage = item.getDamageValue();
         
         if (maxDamage <= 0) return false; // Cannot check durability on non-durable items
 
