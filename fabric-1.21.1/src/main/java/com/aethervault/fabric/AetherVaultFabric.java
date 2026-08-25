@@ -11,6 +11,7 @@ public final class AetherVaultFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ModRegistry.register();
         AetherVault.init();
     }
 }

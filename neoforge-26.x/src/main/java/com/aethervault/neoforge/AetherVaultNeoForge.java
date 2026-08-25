@@ -13,6 +13,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 public final class AetherVaultNeoForge {
 
     public AetherVaultNeoForge(IEventBus modEventBus) {
+        ModRegistry.register(modEventBus);
         modEventBus.addListener(this::onCommonSetup);
     }
 
