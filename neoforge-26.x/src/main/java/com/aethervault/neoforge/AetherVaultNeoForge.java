@@ -23,6 +23,8 @@ public final class AetherVaultNeoForge {
             // Referenced lazily inside the lambda so dedicated servers never load client classes.
             RuneProgramTabletItem.setScreenOpener((player, stack) ->
                     Minecraft.getInstance().setScreen(new RuneProgramScreen()));
+            modEventBus.addListener(ModClient::registerLayers);
+            modEventBus.addListener(ModClient::registerRenderers);
         }
     }
 

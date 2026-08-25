@@ -6,5 +6,7 @@
   "item.aethervault.familiar_spawn_egg": "Familiar Carrier Spawn Egg",
   "entity.aethervault.familiar": "Familiar Carrier",
   "title.aethervault.rune_program": "Rune Program Tablet",
-  "hint.aethervault.rune_program": "1/2/3 place node - drag to move - C connect - T condition - Del remove"
+  "hint.aethervault.rune_program": "1/2/3 place node - drag to move - C connect - T condition - Del remove",
+  "advancement.aethervault.root.title": "AetherVault",
+  "advancement.aethervault.root.description": "Enter the world of aetheric storage"
 }

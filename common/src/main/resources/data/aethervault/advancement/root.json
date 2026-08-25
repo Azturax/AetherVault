@@ -1,0 +1,26 @@
+﻿{
+  "display": {
+    "icon": { "id": "aethervault:rune_program_tablet" },
+    "title": { "translate": "advancement.aethervault.root.title" },
+    "description": { "translate": "advancement.aethervault.root.description" },
+    "background": "minecraft:textures/block/obsidian.png",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "has_orb": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [ { "items": "aethervault:rune_orb" } ]
+      }
+    },
+    "has_tablet": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [ { "items": "aethervault:rune_program_tablet" } ]
+      }
+    }
+  },
+  "requirements": [ [ "has_orb", "has_tablet" ] ]
+}
