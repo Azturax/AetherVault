@@ -18,7 +18,7 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-TEX_DIR = ROOT / "src" / "main" / "resources" / "assets" / "aethervault" / "textures"
+TEX_DIR = ROOT / "common" / "src" / "main" / "resources" / "assets" / "aethervault" / "textures"
 
 # ---------------------------------------------------------------- palette ---
 INDIGO = (25, 13, 63, 255)          # #190D3F
@@ -336,6 +336,57 @@ def gen_inactive_edge(rng):
     return _edge_line((42, 58, 85, 255))
 
 
+def gen_item_rune_orb(rng):
+    """16x16 item sprite: glowing cyan orb with a gold rune ring."""
+    img = new_img(16)
+    px = img.load()
+    cx, cy = 7.5, 7.5
+    for y in range(16):
+        for x in range(16):
+            dist = math.hypot(x - cx, y - cy)
+            if dist < 2.0:
+                px[x, y] = CYAN_BRIGHT                      # hot core
+            elif dist < 4.6:
+                shade = rng.randint(-14, 14)
+                px[x, y] = (min(255, 79 + shade), min(255, 227 + shade),
+                            min(255, 227 + shade), 255)     # orb body
+            elif dist < 5.4:
+                px[x, y] = GOLD_DIM                         # rune ring
+    # Gold ring pips at the compass points.
+    for tx, ty in [(7, 2), (8, 2), (7, 13), (8, 13), (2, 7), (2, 8), (13, 7), (13, 8)]:
+        px[tx, ty] = GOLD
+    # Sparkles.
+    px[5, 5] = (235, 252, 255, 255)
+    px[10, 9] = (235, 252, 255, 255)
+    return img
+
+
+def gen_item_rune_tablet(rng):
+    """16x16 item sprite: purple/bronze tablet with a cyan rune screen."""
+    img = new_img(16)
+    px = img.load()
+    for y in range(16):
+        for x in range(16):
+            if x in (0, 15) or y in (0, 15):
+                px[x, y] = BRONZE_DARK
+            elif x in (1, 14) or y in (1, 14):
+                px[x, y] = BRONZE_LIGHT
+            elif x in (2, 13) or y in (2, 13):
+                px[x, y] = PURPLE_DEEP
+            else:
+                px[x, y] = VORTEX_CORE                      # dark screen
+    # Cyan rune glyph on the screen (simplified raidho).
+    rune = [(7, 5), (7, 6), (7, 7), (7, 8), (7, 9), (7, 10),
+            (8, 5), (9, 6), (9, 7), (8, 8), (8, 9), (9, 10)]
+    for rx, ry in rune:
+        px[rx, ry] = CYAN
+    px[7, 6] = CYAN_BRIGHT
+    # Corner gems.
+    for gx, gy in [(2, 2), (13, 2), (2, 13), (13, 13)]:
+        px[gx, gy] = GOLD
+    return img
+
+
 # ------------------------------------------------------------------- main ---
 GENERATORS = {
     "block/echo_vault_face.png": gen_echo_vault_face,
@@ -350,6 +401,8 @@ GENERATORS = {
     "gui/active_node.png": gen_active_node,
     "gui/edge_line.png": gen_edge_line,
     "gui/inactive_edge.png": gen_inactive_edge,
+    "item/rune_orb.png": gen_item_rune_orb,
+    "item/rune_program_tablet.png": gen_item_rune_tablet,
 }
 
 

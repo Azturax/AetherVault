@@ -1,0 +1,5 @@
+﻿{
+  "variants": {
+    "": { "model": "aethervault:block/lattice_anchor" }
+  }
+}
