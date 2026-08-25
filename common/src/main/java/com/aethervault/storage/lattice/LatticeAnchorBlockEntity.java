@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,8 +33,8 @@ public class LatticeAnchorBlockEntity extends BlockEntity implements IAetherStor
 
     /** Cell index -> stored stack. */
     private final Map<Integer, ItemStack> cells = new HashMap<>();
-    /** Item id -> cell index. */
-    private final Map<UUID, Integer> idToCell = new HashMap<>();
+    /** Item id -> cell index, in insertion order. */
+    private final Map<UUID, Integer> idToCell = new LinkedHashMap<>();
 
     public LatticeAnchorBlockEntity(BlockEntityType<?> type, BlockPos worldPosition) {
         super(type, worldPosition);
@@ -92,6 +93,21 @@ public class LatticeAnchorBlockEntity extends BlockEntity implements IAetherStor
         cells.clear();
         idToCell.clear();
         setChanged();
+    }
+
+    /**
+     * Removes and returns the most recently stored item (used for direct
+     * block interaction).
+     */
+    public Optional<ItemStack> retrieveLatest() {
+        if (idToCell.isEmpty()) {
+            return Optional.empty();
+        }
+        UUID newest = idToCell.keySet().iterator().next();
+        for (UUID id : idToCell.keySet()) {
+            newest = id; // LinkedHashMap iterates in insertion order; take the last.
+        }
+        return retrieve(newest);
     }
 
     /** Number of occupied cells. */

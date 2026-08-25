@@ -1,0 +1,13 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "minecraft:ender_eye" },
+    { "item": "minecraft:gold_nugget" },
+    { "item": "minecraft:copper_ingot" }
+  ],
+  "result": {
+    "id": "aethervault:rune_orb",
+    "count": 1
+  }
+}

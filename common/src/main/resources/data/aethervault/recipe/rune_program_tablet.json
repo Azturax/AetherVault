@@ -1,0 +1,18 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BAB",
+    "ACA",
+    "BAB"
+  ],
+  "key": {
+    "A": { "item": "minecraft:amethyst_shard" },
+    "B": { "item": "minecraft:copper_ingot" },
+    "C": { "item": "minecraft:book" }
+  },
+  "result": {
+    "id": "aethervault:rune_program_tablet",
+    "count": 1
+  }
+}

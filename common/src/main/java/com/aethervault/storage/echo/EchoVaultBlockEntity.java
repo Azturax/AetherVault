@@ -95,6 +95,26 @@ public class EchoVaultBlockEntity extends BlockEntity implements IAetherStorage 
     }
 
     /**
+     * Materializes the newest echo across all slots (used for direct block
+     * interaction). Does not consume the echo.
+     */
+    public Optional<ItemStack> retrieveLatest() {
+        TemporalSnapshot newest = null;
+        for (List<TemporalSnapshot> history : echoSlots.values()) {
+            if (!history.isEmpty()) {
+                TemporalSnapshot candidate = history.get(history.size() - 1);
+                if (newest == null || candidate.getTimestamp() > newest.getTimestamp()) {
+                    newest = candidate;
+                }
+            }
+        }
+        if (newest == null) {
+            return Optional.empty();
+        }
+        return Optional.of(newest.getDecayedStack(System.currentTimeMillis()));
+    }
+
+    /**
      * Marks the most recent echo of the requested item as maintained, making it
      * immune to decay.
      */
