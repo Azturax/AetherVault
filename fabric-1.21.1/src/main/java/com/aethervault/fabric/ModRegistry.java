@@ -1,26 +1,31 @@
-﻿package com.aethervault.fabric;
+package com.aethervault.fabric;
 
 import com.aethervault.AetherVault;
 import com.aethervault.block.EchoVaultBlock;
 import com.aethervault.block.LatticeAnchorBlock;
 import com.aethervault.core.RuneOrbItem;
 import com.aethervault.core.RuneProgramTabletItem;
+import com.aethervault.entities.FamiliarEntity;
 import com.aethervault.storage.echo.EchoVaultBlockEntity;
 import com.aethervault.storage.lattice.LatticeAnchorBlockEntity;
 
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 /**
- * Fabric registry wiring for all AetherVault blocks, items, and block entity types.
+ * Fabric registry wiring for all AetherVault blocks, items, entities, and block entity types.
  */
 public final class ModRegistry {
 
@@ -39,6 +44,14 @@ public final class ModRegistry {
             BuiltInRegistries.BLOCK, id("lattice_anchor"),
             new LatticeAnchorBlock(() -> LATTICE_ANCHOR_TYPE,
                     BlockBehaviour.Properties.of().strength(3.0f, 6.0f).requiresCorrectToolForDrops()));
+
+    // --- Entities ---
+
+    public static final EntityType<FamiliarEntity> FAMILIAR = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE, id("familiar"),
+            EntityType.Builder.of(FamiliarEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 0.9F)
+                    .build("familiar"));
 
     // --- Block entity types ---
 
@@ -66,11 +79,17 @@ public final class ModRegistry {
     public static final Item RUNE_PROGRAM_TABLET = Registry.register(
             BuiltInRegistries.ITEM, id("rune_program_tablet"), new RuneProgramTabletItem(new Item.Properties().stacksTo(1)));
 
+    public static final Item FAMILIAR_SPAWN_EGG = Registry.register(
+            BuiltInRegistries.ITEM, id("familiar_spawn_egg"),
+            new SpawnEggItem(FAMILIAR, 0x190D3F, 0x4FE3E3, new Item.Properties()));
+
     private ModRegistry() {
     }
 
-    /** Performs registration and creative-tab placement. Call from onInitialize. */
+    /** Performs registration, attributes, and creative-tab placement. Call from onInitialize. */
     public static void register() {
+        FabricDefaultAttributeRegistry.register(FAMILIAR, FamiliarEntity.createAttributes().build());
+
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
             entries.accept(ECHO_VAULT_ITEM);
             entries.accept(LATTICE_ANCHOR_ITEM);
@@ -78,6 +97,9 @@ public final class ModRegistry {
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(entries -> {
             entries.accept(RUNE_ORB);
             entries.accept(RUNE_PROGRAM_TABLET);
+        });
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.SPAWN_EGGS).register(entries -> {
+            entries.accept(FAMILIAR_SPAWN_EGG);
         });
     }
 }

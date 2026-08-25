@@ -1,29 +1,35 @@
-﻿package com.aethervault.neoforge;
+package com.aethervault.neoforge;
+
+import java.util.function.Supplier;
 
 import com.aethervault.AetherVault;
 import com.aethervault.block.EchoVaultBlock;
 import com.aethervault.block.LatticeAnchorBlock;
 import com.aethervault.core.RuneOrbItem;
 import com.aethervault.core.RuneProgramTabletItem;
+import com.aethervault.entities.FamiliarEntity;
 import com.aethervault.storage.echo.EchoVaultBlockEntity;
 import com.aethervault.storage.lattice.LatticeAnchorBlockEntity;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.function.Supplier;
-
 /**
- * NeoForge registry wiring for all AetherVault blocks, items, and block entity types.
+ * NeoForge registry wiring for all AetherVault blocks, items, entities, and block entity types.
  */
 public final class ModRegistry {
 
@@ -31,6 +37,15 @@ public final class ModRegistry {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(AetherVault.MOD_ID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, AetherVault.MOD_ID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
+            DeferredRegister.create(Registries.ENTITY_TYPE, AetherVault.MOD_ID);
+
+    // --- Entities ---
+
+    public static final Supplier<EntityType<FamiliarEntity>> FAMILIAR =
+            ENTITY_TYPES.register("familiar", () -> EntityType.Builder.of(FamiliarEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 0.9F)
+                    .build("familiar"));
 
     // --- Block entity types (reference their blocks lazily) ---
 
@@ -68,6 +83,10 @@ public final class ModRegistry {
     public static final DeferredItem<RuneProgramTabletItem> RUNE_PROGRAM_TABLET =
             ITEMS.register("rune_program_tablet", () -> new RuneProgramTabletItem(new Item.Properties().stacksTo(1)));
 
+    public static final DeferredItem<SpawnEggItem> FAMILIAR_SPAWN_EGG =
+            ITEMS.register("familiar_spawn_egg", () -> new SpawnEggItem(
+                    FAMILIAR.get(), 0x190D3F, 0x4FE3E3, new Item.Properties()));
+
     private ModRegistry() {
     }
 
@@ -76,7 +95,13 @@ public final class ModRegistry {
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        ENTITY_TYPES.register(modEventBus);
         modEventBus.addListener(ModRegistry::addCreative);
+        modEventBus.addListener(ModRegistry::registerAttributes);
+    }
+
+    private static void registerAttributes(EntityAttributeCreationEvent event) {
+        event.putEntityType(FAMILIAR.get(), FamiliarEntity.createAttributes().build());
     }
 
     private static void addCreative(BuildCreativeModeTabContentsEvent event) {
@@ -86,6 +111,8 @@ public final class ModRegistry {
         } else if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(RUNE_ORB);
             event.accept(RUNE_PROGRAM_TABLET);
+        } else if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
+            event.accept(FAMILIAR_SPAWN_EGG);
         }
     }
 }
