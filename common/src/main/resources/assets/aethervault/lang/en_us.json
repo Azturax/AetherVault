@@ -4,5 +4,7 @@
   "item.aethervault.rune_orb": "Rune Orb",
   "item.aethervault.rune_program_tablet": "Rune Program Tablet",
   "item.aethervault.familiar_spawn_egg": "Familiar Carrier Spawn Egg",
-  "entity.aethervault.familiar": "Familiar Carrier"
+  "entity.aethervault.familiar": "Familiar Carrier",
+  "title.aethervault.rune_program": "Rune Program Tablet",
+  "hint.aethervault.rune_program": "1/2/3 place node - drag to move - C connect - T condition - Del remove"
 }

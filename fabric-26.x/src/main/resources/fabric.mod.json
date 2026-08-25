@@ -1,4 +1,4 @@
-﻿{
+{
   "schemaVersion": 1,
   "id": "aethervault",
   "version": "${mod_version}",
@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "com.aethervault.fabric.AetherVaultFabric"
+    ],
+    "client": [
+      "com.aethervault.fabric.AetherVaultClient"
     ]
   },
   "depends": {
