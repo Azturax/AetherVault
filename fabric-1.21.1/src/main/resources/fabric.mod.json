@@ -1,0 +1,28 @@
+﻿{
+  "schemaVersion": 1,
+  "id": "aethervault",
+  "version": "${mod_version}",
+  "name": "AetherVault",
+  "description": "Aetheric storage systems and a visual rune-programming framework.",
+  "authors": [
+    "Azturax"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Azturax/AetherVault",
+    "sources": "https://github.com/Azturax/AetherVault",
+    "issues": "https://github.com/Azturax/AetherVault/issues"
+  },
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.aethervault.fabric.AetherVaultFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

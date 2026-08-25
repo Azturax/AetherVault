@@ -1,0 +1,48 @@
+plugins {
+    id 'net.neoforged.moddev' version "${moddevgradle_version}"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(Integer.parseInt(java_version_1211))
+    }
+}
+
+// Compile the shared, loader-agnostic sources into this platform jar.
+sourceSets {
+    main {
+        java {
+            srcDir rootProject.file('common/src/main/java')
+        }
+        resources {
+            srcDir rootProject.file('common/src/main/resources')
+        }
+    }
+}
+
+neoForge {
+    // Minecraft 1.21.1 - the last supported 1.x-scheme version.
+    version = neoforge_version_1211
+
+    mods {
+        aethervault {
+            sourceSet sourceSets.main
+        }
+    }
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+        }
+    }
+}
+
+processResources {
+    inputs.property 'mod_version', project.version
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand 'mod_version': project.version
+    }
+}

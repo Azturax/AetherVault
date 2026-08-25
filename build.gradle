@@ -1,0 +1,29 @@
+/**
+ * AetherVault - multiloader root build.
+ *
+ * Shared, loader-agnostic code lives in common/src/main/{java,resources} and is
+ * compiled into every platform module via shared sourceSets. Platform modules:
+ *
+ *   neoforge-1.21.1 / fabric-1.21.1   -> Minecraft 1.21.1 (last 1.x-supported version)
+ *   neoforge-26.x   / fabric-26.x     -> Minecraft 26.x   (new version scheme)
+ */
+
+subprojects {
+    apply plugin: 'java-library'
+
+    group = maven_group
+    version = mod_version
+
+    java {
+        withSourcesJar()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.release = 21
+    }
+
+    repositories {
+        mavenCentral()
+    }
+}

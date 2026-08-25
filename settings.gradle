@@ -1,0 +1,28 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'NeoForged'
+            url = 'https://maven.neoforged.net/releases'
+        }
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+    }
+}
+
+plugins {
+    // Auto-provisioning JDK toolchains (needed by both loader toolchains)
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
+
+rootProject.name = 'AetherVault'
+
+// 1.21.1 line - last supported 1.x-scheme version
+include 'neoforge-1.21.1'
+include 'fabric-1.21.1'
+
+// 26.x line - new Minecraft version scheme
+include 'neoforge-26.x'
+include 'fabric-26.x'

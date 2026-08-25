@@ -1,0 +1,49 @@
+plugins {
+    id 'net.neoforged.moddev' version "${moddevgradle_version}"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(Integer.parseInt(java_version_26x))
+    }
+}
+
+// Compile the shared, loader-agnostic sources into this platform jar.
+sourceSets {
+    main {
+        java {
+            srcDir rootProject.file('common/src/main/java')
+        }
+        resources {
+            srcDir rootProject.file('common/src/main/resources')
+        }
+    }
+}
+
+// NOTE: 26.x line - versions in gradle.properties must be pinned once the 26.x
+// artifacts publish. The module structure already matches the 1.21.1 build.
+neoForge {
+    version = neoforge_version_26x
+
+    mods {
+        aethervault {
+            sourceSet sourceSets.main
+        }
+    }
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+        }
+    }
+}
+
+processResources {
+    inputs.property 'mod_version', project.version
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand 'mod_version': project.version
+    }
+}

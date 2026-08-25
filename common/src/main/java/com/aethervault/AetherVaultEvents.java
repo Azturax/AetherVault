@@ -1,95 +1,69 @@
 package com.aethervault;
 
-import com.aethervault.core.IAetherStorage;
 import com.aethervault.entities.FamiliarEntity;
+import com.aethervault.logic.FlowEvaluator;
 import com.aethervault.storage.echo.EchoVaultBlockEntity;
-import net.minecraft.world.level.block.Block;
+import com.aethervault.storage.echo.TemporalSnapshot;
+
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.world.level.BlockEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod(AetherVault.MOD_ID)
-public class AetherVault {
-    public static final String MOD_ID = "aethervault";
-    private static final Block ECHO_VAULT_BLOCK = new EchoVaultBlockEntity(null); // Placeholder for actual block registration
+/**
+ * Loader-agnostic game-event hooks for AetherVault.
+ *
+ * <p>Platform modules translate their loader's events (block placement, item drops,
+ * entity spawns) into calls on these methods. Keeping the handlers here means the
+ * behavior is shared verbatim between NeoForge and Fabric.</p>
+ */
+public final class AetherVaultEvents {
 
-    public AetherVault() {
-        registerModComponents();
+    private static final FlowEvaluator FLOW_EVALUATOR = new FlowEvaluator();
+
+    private AetherVaultEvents() {
     }
 
-    private void registerModComponents() {
-        // Register Blocks and Entities using NeoForge Event Bus Listeners
-        AetherVaultEvents.register(this);
-        System.out.println("Registering AetherVault blocks, entities, and event handlers...");
-    }
-}
-
-class AetherVaultEvents {
-    public static void register(AetherVault mod) {
-        // Register Block Events to handle initialization logic when a block is placed/interacted with
-        BlockEvent.PlaceEvent.register((event) -> {
-            if (event.getBlock() instanceof EchoVaultBlockEntity) {
-                EchoVaultBlockEntity be = (EchoVaultBlockEntity) event.getPos().getBlockEntity();
-                // Basic initialization logic: ensure storage is ready upon placement
-                System.out.println("Echo Vault Block Entity initialized at " + event.getPos());
-            }
-        });
-
-        // Register Item Drop Events to demonstrate ingestion into FlowEvaluator
-        net.minecraftforge.event.entity.player.PlayerEvent.DropItemEvent.register((event) -> {
-            if (event.getItem() instanceof ItemStack itemStack && !itemStack.isEmpty()) {
-                System.out.println("Dropped Item Event detected: " + event.getItem());
-                // High-level demonstration of connecting game events to custom logic
-                FlowEvaluator evaluator = new FlowEvaluator();
-                evaluator.evaluateItem(itemStack);
-            }
-        });
-
-        // Register Entity Spawning for FamiliarEntity (Placeholder)
-        net.minecraftforge.event.entity.EntityEvent.Spawn.register((event) -> {
-            if (event.getEntity() instanceof FamiliarEntity familiar) {
-                System.out.println("Familiar Entity spawned: " + familiar);
-                // Logic to link the entity to its associated RuneChipInstruction or storage
-            }
-        });
-    }
-}
-
-class FlowEvaluator {
     /**
-     * High-level method demonstrating how an ingested item is processed by the logic engine.
+     * Called by platform modules during startup to announce that hooks are wired.
      */
-    public void evaluateItem(ItemStack item) {
-        System.out.println("FlowEvaluator: Starting evaluation for dropped item.");
-        // In a real scenario, this would check conditions and execute RunePrograms.
-        if (item.isAir()) return;
+    public static void registerHooks() {
+        System.out.println("AetherVault event hooks registered (block place, item drop, entity spawn).");
+    }
 
-        // Example of checking an ItemTagCondition before processing
-        ItemTagCondition condition = new ItemTagCondition();
-        boolean passesCondition = condition.check(item); 
-
-        if (passesCondition) {
-            System.out.println("FlowEvaluator: Item passed initial conditions. Initiating RuneProgram execution.");
-            // Logic to find a relevant storage node or execute a program
-        } else {
-            System.out.println("FlowEvaluator: Item failed initial conditions and will drop normally.");
+    /**
+     * Hook: a block was placed in the world. Initializes Echo Vault storage on placement.
+     */
+    public static void onBlockPlaced(EchoVaultBlockEntity blockEntity, String positionDescription) {
+        if (blockEntity != null) {
+            System.out.println("Echo Vault Block Entity initialized at " + positionDescription);
         }
     }
-}
 
-class EchoVaultBlockEntity extends BlockEntity implements IAetherStorage {
-    private final java.util.Map<java.util.UUID, java.util.List<TemporalSnapshot>> echoSlots = new java.util.HashMap<>();
-
-    public EchoVaultBlockEntity(net.minecraft.world.level.block.entity.Block master) {
-        super(master);
+    /**
+     * Hook: a player dropped an item. Demonstrates ingestion into the FlowEvaluator.
+     */
+    public static void onItemDropped(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            return;
+        }
+        System.out.println("Dropped Item Event detected: " + stack);
+        FLOW_EVALUATOR.evaluateItem(stack);
     }
 
-    @Override
-    protected void addEchoSlot(java.util.UUID uniqueId, TemporalSnapshot snapshot) {
-        echoSlots.computeIfAbsent(uniqueId, k -> new java.util.ArrayList<>()).add(snapshot);
+    /**
+     * Hook: a FamiliarEntity spawned. Links the entity to its rune program context.
+     */
+    public static void onFamiliarSpawned(FamiliarEntity familiar) {
+        if (familiar != null) {
+            System.out.println("Familiar Entity spawned: " + familiar);
+            // Logic to link the entity to its associated RuneChipInstruction or storage.
+        }
     }
 
-    // ... other IAetherStorage methods implementation (store, retrieve, hasSpace, clear) 
-    // as defined in the original file to maintain functionality ...
+    /**
+     * Hook: a temporal snapshot was captured by an Echo Vault.
+     */
+    public static void onSnapshotCaptured(TemporalSnapshot snapshot) {
+        if (snapshot != null) {
+            System.out.println("Temporal snapshot captured: " + snapshot);
+        }
+    }
 }

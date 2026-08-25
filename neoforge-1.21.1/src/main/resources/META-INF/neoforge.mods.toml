@@ -1,0 +1,29 @@
+﻿modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "All Rights Reserved"
+issueTrackerURL = "https://github.com/Azturax/AetherVault/issues"
+
+[[mods]]
+modId = "aethervault"
+version = "${mod_version}"
+displayName = "AetherVault"
+authors = "Azturax"
+description = '''
+Aetheric storage systems and a visual rune-programming framework.
+Echo Vaults with temporal snapshots, Lattice Anchors, and the
+Rune Program Tablet for node-based item filtering.
+'''
+
+[[dependencies.aethervault]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.aethervault]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.22)"
+ordering = "NONE"
+side = "BOTH"
