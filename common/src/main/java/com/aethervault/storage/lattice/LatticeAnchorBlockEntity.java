@@ -103,7 +103,7 @@ public class LatticeAnchorBlockEntity extends BlockEntity implements IAetherStor
         if (idToCell.isEmpty()) {
             return Optional.empty();
         }
-        UUID newest = idToCell.keySet().iterator().next();
+        UUID newest = null;
         for (UUID id : idToCell.keySet()) {
             newest = id; // LinkedHashMap iterates in insertion order; take the last.
         }
